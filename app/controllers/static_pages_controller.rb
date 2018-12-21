@@ -11,7 +11,7 @@ class StaticPagesController < ApplicationController
 
   def contact
 
-  puts 'tete'
+    puts 'tete'
 
   end
 
