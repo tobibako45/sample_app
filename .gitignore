@@ -25,4 +25,4 @@
 # Ignore Spring files.
 /spring/*.pid
 
-.idea
+.idea/
