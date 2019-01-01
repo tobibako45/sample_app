@@ -33,10 +33,15 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                          password:              "password",
                                          password_confirmation: "password" } }
     end
-    follow_redirect! # POSTリクエストを送信した結果を見て、指定されたリダイレクト先に移動するメソッド
-    assert_template 'users/show'
 
-    assert_not flash.empty? # flashメッセージが空でなければ成功
+    # POSTリクエストを送信した結果を見て、指定されたリダイレクト先に移動するメソッド
+    follow_redirect!
+    # そのアクションで指定されたテンプレートが描写されているかを検証
+    assert_template 'users/show'
+    # flash.empty?が偽なら成功。flashメッセージが空でなければ成功
+    assert_not flash.empty?
+    # is_logget_in?が真ならば成功
+    assert is_logged_in?
   end
 
 end

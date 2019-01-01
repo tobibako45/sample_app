@@ -10,13 +10,11 @@ class UsersController < ApplicationController
     # debugger
   end
 
-
-
-
   def create
     # @user = User.new(params[:user]) これでもいいけど、直でDBに入れると危険なので
     @user = User.new(user_params) # 外部メソッドにでparameを受け取ってから入れる
     if @user.save
+      log_in @user
       flash[:success] = "Welcome to the Sample App!"
       redirect_to @user
       # redirect_to user_url(@user) # 同等
