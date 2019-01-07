@@ -4,22 +4,29 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(email: params[:session][:email].downcase)
-    if user && user.authenticate(params[:session][:password])
+    @user = User.find_by(email: params[:session][:email].downcase)
+    if @user && @user.authenticate(params[:session][:password])
       # ユーザーログイン後にユーザー情報のページにリダイレクトする
-      log_in user
+      log_in @user
+
+      # [remember me] チェックボックスの送信結果を処理する
+      params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
+
+      # ログインしてユーザーを保持する
+      # remember user
+
       # Railsでは上のコードを自動的に変換して、次のようなプロフィールページへのルーティングにしています。user_url(user)
-      redirect_to user
+      redirect_to @user
 
     else
       # エラーメッセージを作成する
-      flash.now[:daner] = 'Invalid email/password combination'
+      flash.now[:danger] = 'Invalid email/password combination'
       render 'new'
     end
   end
 
   def destroy
-    log_out
+    log_out if logged_in?
     redirect_to root_url
   end
 

@@ -14,7 +14,6 @@ Rails.application.routes.draw do
   get '/login', to: 'sessions#new'
   post '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
-
   resources :users
   # resources :usersという行は、ユーザー情報を表示するURL (/users/1) を追加するためだけのものではありません。
   # サンプルアプリケーションにこの１行を追加すると、ユーザーのURLを生成するための多数の名前付きルートと共に、
