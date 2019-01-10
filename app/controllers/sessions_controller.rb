@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
 
   def new
+    # debugger
   end
 
   def create
@@ -12,11 +13,15 @@ class SessionsController < ApplicationController
       # [remember me] チェックボックスの送信結果を処理する
       params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
 
+      #  フレンドリーフォワーディング
+      # 記憶したURL（もしくはデフォルト値）にリダイレクト
+      redirect_back_or @user
+
       # ログインしてユーザーを保持する
       # remember user
 
       # Railsでは上のコードを自動的に変換して、次のようなプロフィールページへのルーティングにしています。user_url(user)
-      redirect_to @user
+      # redirect_to user
 
     else
       # エラーメッセージを作成する

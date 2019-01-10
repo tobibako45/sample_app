@@ -21,7 +21,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     # CSSセレクタの要素が一致すれば成功。
     assert_select 'div#error_explanation' #idがerror_explanationがあれば成功
     assert_select 'div.alert' # .alertがあれば成功
-    assert_select 'form[action="/signup"]'
+    # assert_select 'form[action="/signup"]'
   end
 
   # test "有効なユーザー登録に対するテスト" do
