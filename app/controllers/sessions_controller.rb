@@ -5,17 +5,34 @@ class SessionsController < ApplicationController
   end
 
   def create
-    @user = User.find_by(email: params[:session][:email].downcase)
-    if @user && @user.authenticate(params[:session][:password])
-      # ユーザーログイン後にユーザー情報のページにリダイレクトする
-      log_in @user
+    # ユーザーをemailで検索する
+    user = User.find_by(email: params[:session][:email].downcase)
+    # 有効化されたユーザーか判定する
+    if user && user.authenticate(params[:session][:password])
 
-      # [remember me] チェックボックスの送信結果を処理する
-      params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
+      if user.activated?
+        # ログインする
+        log_in user
+        # セッションパラメータのremember_meの値が1なら、ユーザ情報を記憶する（1以外なら忘れる）
+        params[:session][:remember_me] == '1' ? remember(user) : forget(user)
 
-      #  フレンドリーフォワーディング
-      # 記憶したURL（もしくはデフォルト値）にリダイレクト
-      redirect_back_or @user
+        #  フレンドリーフォワーディング
+        # 記憶したURL（もしくはデフォルト値）にリダイレクト。ログイン前にユーザーがいた場所にリダイレクトするてこと
+        redirect_back_or user
+      else
+        # アカウントが認証されていない旨のメッセージを代入
+        message = "Account not activated. " # アカウントが有効になっていません
+
+        # emailの有効化リンクをチェックする旨のメッセージを代入
+        message += "Check your email for the activation link."  # アクティベーションリンクについてはあなたのEメールをチェックしてください。
+
+        # フラッシュメッセージにwarningをセットする
+        flash[:warning] = message
+        # ルートURLにリダイレクトする
+        redirect_to root_url
+
+      end
+
 
       # ログインしてユーザーを保持する
       # remember user

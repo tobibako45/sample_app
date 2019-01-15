@@ -17,5 +17,10 @@ Rails.application.routes.draw do
   resources :users
   # resources :usersという行は、ユーザー情報を表示するURL (/users/1) を追加するためだけのものではありません。
   # サンプルアプリケーションにこの１行を追加すると、ユーザーのURLを生成するための多数の名前付きルートと共に、
-  # RESTfulなUsersリソースで必要となるすべてのアクションが利用できるようになるのです。
+  # RESTfulなUsersリソースで必要となるすべてのアクションが利用できるようになるのです。(())
+  #
+
+  # アカウント有効化に使うリソース (editアクション)
+  resources :account_activations, only: [:edit]
+
 end

@@ -5,6 +5,7 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
   def setup
     @admin = users(:michael) # 管理者ユーザ
     @non_admin = users(:archer) # 非管理者ユーザ
+    # @non_activated_user = users(:non_activated) # 有効化されていないテストユーザー
   end
 
   # ページネーションを含めたUsersIndexのテスト
@@ -17,7 +18,6 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
   #     assert_select 'a[href=?]', user_path(user), test: user.name
   #   end
   # end
-
 
   # 削除リンクとユーザー削除に対する統合テスト
   test "should as admin including pagination and delete links" do
@@ -43,6 +43,7 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
       # DELETEリクエストを非管理者ユーザーに送信
       delete user_path(@non_admin)
     end
+
   end
 
 

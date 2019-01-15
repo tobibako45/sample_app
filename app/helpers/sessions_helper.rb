@@ -25,7 +25,11 @@ module SessionsHelper
       # raise   # テストがパスすれば、この部分がテストされていないことがわかる
 
       user = User.find_by(id: user_id)
-      if user && user.authenticated?(cookies[:remember_token])
+
+      # authenticated?メソッドは、アカウント有効化のダイジェストと、
+      # 渡されたトークンが一致するかどうかをチェックします。
+      # if user && user.authenticated?(cookies[:remember_token])
+      if user && user.authenticated?(:remember, cookies[:remember_token])
         log_in user
         @current_user = user
       end

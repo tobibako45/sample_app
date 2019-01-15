@@ -1,0 +1,18 @@
+<!--# アカウント有効化のテキストビュー-->
+メールのテキスト内容
+
+おれはプレーンテキスト版
+
+Hi <%= @user.name %>,
+
+Welcome to the Sample App! Click on the link below to activate your account:
+
+サンプルアプリへようこそ！ アカウントをアクティブにするには、以下のリンクをクリックしてください。
+
+<%= edit_account_activation_url(@user.activation_token, email: @user.email) %>
+
+
+<!--User#account_activation-->
+
+
+<!--<%#= @greeting %>, find me in app/views/user_mailer/account_activation.text.erb-->

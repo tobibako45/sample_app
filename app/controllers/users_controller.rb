@@ -11,13 +11,15 @@ class UsersController < ApplicationController
 
   def index
     # @users = User.all
-    @users = User.paginate(page: params[:page])
+    # @users = User.paginate(page: params[:page])
     # byebug
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
 
 
   def show
     @user = User.find(params[:id])
+    redirect_to root_url and return unless @user.activated?
     # byebug
     # debugger
   end
@@ -29,15 +31,35 @@ class UsersController < ApplicationController
 
   def create
     # @user = User.new(params[:user]) これでもいいけど、直でDBに入れると危険なので
-    @user = User.new(user_params) # 外部メソッドにでparameを受け取ってから入れる
+    # 外部メソッドにでparamsを受け取ってから入れる
+    @user = User.new(user_params)
+
     if @user.save
-      log_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
+
+      # ユーザーモデルオブジェクトからメールを送信する
+      @user.send_activation_email
+
+
+      # log_in @user
+
+      # ユーザー登録にアカウント有効化を追加する
+      # account_activationでアカウント有効化リンクをメール送信する
+      # deliver_nowでメールを送信する
+      #
+      # deliver_nowは、メールを送信するメソッド。
+      # アカウント有効化メールを送信後、ログインするのではなく、T
+      # OPページにリダイレクトさせる
+      # UserMailer.account_activation(@user).deliver_now
+      # flash[:success] = "Welcome to the Sample App!"
+
+      flash[:info] = "Please check your email to activate account."
+      redirect_to root_url
+      # redirect_to @user
       # redirect_to user_url(@user) # 同等
     else
       render 'new'
     end
+
   end
 
   def edit
