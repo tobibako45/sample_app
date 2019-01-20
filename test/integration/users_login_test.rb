@@ -10,22 +10,21 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
   test "login with invalid information" do
     # ログイン用のパスを開く
     get login_path
-    # 新しいセッションのフォームが正しく表示されたことを確認する
+    # 新しいセッションのフォームが正しく表示されたことをチェック
     assert_template 'sessions/new'
     # わざと無効なparamsハッシュを使ってセッション用パスにPOSTする
     post login_path, params: { session: { email: "", password: "" } }
-    # 新しいセッションのフォームが再度表示され、フラッシュメッセージが追加されることを確認する
+    # 新しいセッションのフォームが再度表示され、フラッシュメッセージが追加されることをチェック
     assert_not flash.empty?
-    # 別のページ (Homeページなど) にいったん移動する
+    # 別のページ (Homeページなど) にいったん移動
     get root_path
-    # 移動先のページでフラッシュメッセージが表示されていないことを確認する
+    # 移動先のページでflashが表示されていないことをチェック
     assert flash.empty?
   end
 
 
   # 有効な情報を使ってユーザーログインをテストする
   # test "有効な情報でログインし、その後ログアウトする" do
-
   test "login with valid information followed by logout" do
     # ログイン用のパスを開く
     get login_path
@@ -41,7 +40,7 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     follow_redirect!
     # ログイン用のリンクがなくなってるかをチェック
     assert_template 'users/show'
-    # count: 0というオプションをassert_selectに追加すると、渡したパターンに一致するリンクが０かどうかを確認するようになります。
+    # count: 0というオプションをassert_selectに追加すると、渡したパターンに一致するリンクが０かどうかを確認するようになる。
     assert_select "a[href=?]", login_path, count: 0
     assert_select "a[href=?]", logout_path
     assert_select "a[href=?]", user_path(@user)
