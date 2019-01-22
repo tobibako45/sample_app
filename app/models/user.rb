@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  # micropostは、その所有者 (ユーザー) と一緒に破棄されることを保証する
+  has_many :microposts, dependent: :destroy
+
   attr_accessor :remember_token, :activation_token, :reset_token
 
   # before_save オブジェクトがDBに保存される直前で実行。INSERT、UPDATE両方で実行
@@ -106,6 +109,14 @@ class User < ApplicationRecord
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
   end
+
+
+  # 試作feedの定義
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
+
+
 
 
   private

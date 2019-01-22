@@ -122,4 +122,18 @@ class UserTest < ActiveSupport::TestCase
     assert_not @user.authenticated?(:remember, '')
   end
 
+
+  # dependent: :destroyのテスト。関連するmicropostsは破壊されるべきです
+  test "associated microposts should be destroyed" do
+    # ユーザーをDBに保存
+    @user.save
+    # ユーザーに紐付いたマイクロポストを生成する
+    @user.microposts.create!(content: "Lorem ipsum")
+    # マイクロソフトの数が-1されていることを確認
+    assert_difference 'Micropost.count', -1 do
+      # ユーザーを削除する
+      @user.destroy
+    end
+  end
+
 end

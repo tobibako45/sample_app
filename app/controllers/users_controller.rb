@@ -19,7 +19,13 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    # @micropostsインスタンス変数をshowアクションに追加
+    # @microposts = @user.microposts.paginate(page: params[:page])
+    @microposts = @user.microposts.paginate(page: params[:page])
+
     redirect_to root_url and return unless @user.activated?
+
+
     # byebug
     # debugger
   end
@@ -93,15 +99,20 @@ class UsersController < ApplicationController
 
   # beforeアクション
 
+
   # ログイン済みユーザーかどうか確認
-  def logged_in_user
-    # ログインしてなかったら、flashメッセージを出して、ログインページにいく
-    unless logged_in?
-      store_location
-      flash[:danger] = "Please log in."
-      redirect_to login_url
-    end
-  end
+  # def logged_in_user
+  #   # ログインしてなかったら、flashメッセージを出して、ログインページにいく
+  #   unless logged_in?
+  #     store_location
+  #     flash[:danger] = "Please log in."
+  #     redirect_to login_url
+  #   end
+  # end
+  #
+
+  # Applicationコントローラに移したので削除
+
 
   # 正しいユーザーかどうか確認
   def correct_user

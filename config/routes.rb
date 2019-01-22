@@ -29,4 +29,7 @@ Rails.application.routes.draw do
 
   resources :password_resets,     only: [:new, :create, :edit, :update]
 
+  # マイクロポストリソースのルーティング
+  resources :microposts, only: [:create, :destroy]
+
 end
