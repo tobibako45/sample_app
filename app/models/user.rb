@@ -2,6 +2,22 @@ class User < ApplicationRecord
   # micropostは、その所有者 (ユーザー) と一緒に破棄されることを保証する
   has_many :microposts, dependent: :destroy
 
+  # 能動的関係に対して1対多(has_many)の関連付け
+  # active_relationships => Railsに探して欲しいモデルのクラス名を明示的に伝える
+  #
+  # ユーザーを削除したら、ユーザーのリレーションシップも同時に削除される必要があります。
+  # そのため、関連付けにdependent: :destroyも追加しています。
+  has_many :active_relationships, class_name: "Relationship",
+           foreign_key: "follower_id",
+           dependent: :destroy
+
+  # Userモデルにfollowingの関連付けを追加
+  # 「following配列の元はfollowed idの集合である」ということを明示的にRailsに伝える
+  has_many :following, through: :active_relationships, source: :followed
+
+
+
+
   attr_accessor :remember_token, :activation_token, :reset_token
 
   # before_save オブジェクトがDBに保存される直前で実行。INSERT、UPDATE両方で実行
@@ -115,6 +131,42 @@ class User < ApplicationRecord
   def feed
     Micropost.where("user_id = ?", id)
   end
+
+
+  # ユーザーをフォローする
+  def follow(other_user)
+    following << other_user
+  end
+
+  # ユーザーのフォローを解除する
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy
+  end
+
+  # 現在のユーザーがフォローしてたらtrueを返す
+  def following?(other_user)
+    following.include?(other_user)
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
