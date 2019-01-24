@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   # 実行前メソッド。フィルタ。まず最初にlogged_in_userメソッドを実行して、ログイン済みユーザーかどうか確認してる。
   # onlyオプションを指定すると、指定したアクションでのみ利用する。
   # これだとeditアクションとupdateアクションだけに適用。indexとdestroyも追加
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :following, :followers]
   # 正しいユーザーかチェック
   before_action :correct_user, only: [:edit, :update]
   # destroyアクションを管理者だけに限定する
@@ -24,7 +24,6 @@ class UsersController < ApplicationController
     @microposts = @user.microposts.paginate(page: params[:page])
 
     redirect_to root_url and return unless @user.activated?
-
 
     # byebug
     # debugger
@@ -68,9 +67,13 @@ class UsersController < ApplicationController
 
   end
 
+
+
   def edit
     @user = User.find(params[:id])
   end
+
+
 
   def update
     @user = User.find(params[:id])
@@ -83,11 +86,30 @@ class UsersController < ApplicationController
     end
   end
 
+
   def destroy
     User.find(params[:id]).destroy # DBから削除 trueが返る
     flash[:success] = "User deleted"
     redirect_to users_url
   end
+
+
+  def following
+    @title = "Following"
+    @user = User.find(params[:id])
+    @users = @user.following.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+  def followers
+    @title = "Followers"
+    @user = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+
+
 
 
   private

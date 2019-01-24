@@ -153,6 +153,10 @@ class UserTest < ActiveSupport::TestCase
     michael.follow(archer)
     # michaelがarcherをフォローしていることを確認
     assert michael.following?(archer)
+
+    # archerのフォロワーに、michaelがいることを確認
+    assert archer.followers.include?(michael)
+
     # michaelがarcherをフォロー解除する
     michael.unfollow(archer)
     # michaelがarcherをフォローしていないことを確認
@@ -162,6 +166,36 @@ class UserTest < ActiveSupport::TestCase
 
 
 
+  # ステータスフィードのテスト
+
+  test "feed should the right posts" do
+    michael = users(:michael)
+    archer = users(:archer)
+    lana = users(:lana)
+
+    # フォローしているユーザーの投稿を確認
+    # lanaのマイクロポストを取得
+    lana.microposts.each do |post_following|
+      # michaelのフェードに含まれていることを確認
+      assert michael.feed.include?(post_following)
+    end
+
+    # 自分自身の投稿を確認
+    # michaelのマイクロポストを取得
+    michael.microposts.each do |post_self|
+      # michaelのフィードに含まれていることを確認
+      assert michael.feed.include?(post_self)
+    end
+
+    # フォローしていないユーザーの投稿を確認
+    # archerのマイクロポストを取得
+    archer.microposts.each do |post_unfollowed|
+      # michaelのフィードに含まれて居ないことを確認
+      assert_not michael.feed.include?(post_unfollowed)
+    end
+
+
+  end
 
 
 

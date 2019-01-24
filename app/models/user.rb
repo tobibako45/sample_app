@@ -11,11 +11,23 @@ class User < ApplicationRecord
            foreign_key: "follower_id",
            dependent: :destroy
 
+
+  # 受動関係を使ってuser.followersを実装する
+  has_many :passive_relationships, class_name: "Relationship",
+           foreign_key: "followed_id",
+           dependent: :destroy
+
+
   # Userモデルにfollowingの関連付けを追加
-  # 「following配列の元はfollowed idの集合である」ということを明示的にRailsに伝える
+  # 「following配列の元は、followed idの集合である」ということを明示的にRailsに伝える
   has_many :following, through: :active_relationships, source: :followed
 
+  # 「followers配列の元は、follower idの集合である」ということを明示的にRailsに伝える
+  # これは:followers属性の場合、Railsが「followers」を単数形にして自動的に外部キーfollower_idを探してくれるからです。
+  # リスト 14.12と違って必要のない:sourceキーをそのまま残しているのは、has_many :followingとの類似性を強調させるためです。
+  has_many :followers, through: :passive_relationships, source: :follower
 
+  # has_many :followers, through: :passive_relationships # これでもいい
 
 
   attr_accessor :remember_token, :activation_token, :reset_token
@@ -127,9 +139,18 @@ class User < ApplicationRecord
   end
 
 
-  # 試作feedの定義
+  # 試作feedの定義 から、ちゃんとしたやつ
   def feed
-    Micropost.where("user_id = ?", id)
+    # Micropost.where("user_id = ?", id)
+    # Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
+    # Micropost.where("user_id IN (?) ", following_ids)
+    # Micropost.all
+    # Micropost.where("user_id IN (:following_ids) OR user_id = :user_id", following_ids: following_ids, user_id: id)
+
+    following_ids = "SELECT followed_id FROM relationships
+                     WHERE follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids})
+                     OR user_id = :user_id", user_id: id)
   end
 
 
@@ -138,7 +159,7 @@ class User < ApplicationRecord
     following << other_user
   end
 
-  # ユーザーのフォローを解除する
+  # ユーザーをフォロー解除する
   def unfollow(other_user)
     active_relationships.find_by(followed_id: other_user.id).destroy
   end
@@ -147,28 +168,6 @@ class User < ApplicationRecord
   def following?(other_user)
     following.include?(other_user)
   end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   private

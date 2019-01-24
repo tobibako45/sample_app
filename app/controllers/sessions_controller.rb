@@ -7,9 +7,12 @@ class SessionsController < ApplicationController
   def create
     # ユーザーをemailで検索する
     user = User.find_by(email: params[:session][:email].downcase)
+
     # 有効化されたユーザーか判定する
+    # .authenticateは、入力されたパスワードを暗号化し、DBに登録されているpassword_digestと一致するか検証します。
     if user && user.authenticate(params[:session][:password])
 
+      # ユーザーが有効化されているとき
       if user.activated?
         # ログインする
         log_in user

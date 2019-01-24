@@ -39,8 +39,24 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
     # div class=paginationが1度のみ表示されていることをテスト
     assert_select 'div.pagination', count:1
 
+    # プロフィールページに、フォロワー数、フォロー数が表示されているかチェック
+    assert_match @user.active_relationships.count.to_s, response.body
+    assert_match @user.passive_relationships.count.to_s, response.body
 
   end
+
+
+
+  # ホームページにフォロー数が、フォロワー数が表示されているかチェック
+  test "count relationships" do
+    log_in_as(@user)
+    get root_path
+    assert_match @user.active_relationships.count.to_s, response.body
+    assert_match @user.passive_relationships.count.to_s, response.body
+  end
+
+
+
 
 
 end

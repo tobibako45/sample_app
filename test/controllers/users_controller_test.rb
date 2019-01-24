@@ -68,20 +68,32 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_url
   end
 
-# 管理者以外のユーザーとしてログインした場合は、destroyをリダイレクトする必要があります。
+  # 管理者以外のユーザーとしてログインした場合は、destroyをリダイレクトする必要があります。
   test "should redirect destroy when logged in as a non-admin" do
 
-    log_in_as(@other_user)  # @other_userでログイン
+    log_in_as(@other_user) # @other_userでログイン
     # countが正しく変化していないことを確認
     assert_no_difference "User.count" do
       delete user_path(@user)
     end
     assert_redirected_to root_url
-
-
   end
 
 
+  # ログインしていないときは、フォローページをリダイレクトする
+  test "should redirect following when not logged in" do
+    # following_user_pathにGET送信
+    get following_user_path(@user)
+    # ログインページへリダイレクト
+    assert_redirected_to login_url
+  end
+
+  # ログインしていないときはフォロワーページをリダイレクトする
+  test "should redirect followers when not logged in" do
+    # followers_user_pathにGET送信
+    get followers_user_path(@user)
+    assert_redirected_to login_url
+  end
 
 
 end

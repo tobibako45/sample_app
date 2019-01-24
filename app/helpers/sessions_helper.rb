@@ -1,4 +1,5 @@
 module SessionsHelper
+
   # 渡されたユーザーでログインする
   def log_in(user)
     session[:user_id] = user.id
@@ -74,7 +75,6 @@ module SessionsHelper
     # リクエストが送られたURLをsession[:forwarding_url]に、GETリクエストが送られたときだけ格納
     session[:forwarding_url] = request.original_url if request.get?
   end
-
 
 
 end
